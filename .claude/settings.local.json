@@ -40,7 +40,8 @@
       "Bash(npm root *)",
       "Bash(NODE_PATH=$\\(npm root -g\\) node build_cheatsheet.js)",
       "Bash(python3 '/Users/taazich4/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin/a0836816-ce70-4321-a849-d5b2daf4afbb/282329be-ec6a-48c0-be37-8bd743158f96/skills/docx/scripts/office/validate.py' '/Users/taazich4/Documents/ZHAW_code/Data Management/learn-project/Spring_Boot_Cheatsheet.docx')",
-      "Bash(unzip -l \"/Users/taazich4/Documents/ZHAW_code/Data Management/learn-project/Spring_Boot_Cheatsheet.docx\")"
+      "Bash(unzip -l \"/Users/taazich4/Documents/ZHAW_code/Data Management/learn-project/Spring_Boot_Cheatsheet.docx\")",
+      "Bash(pip3 install *)"
     ]
   }
 }
