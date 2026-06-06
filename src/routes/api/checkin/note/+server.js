@@ -10,10 +10,17 @@ export async function PATCH({ request, locals }) {
 	const today = new Date().toISOString().split('T')[0];
 	const checkins = await getCheckinsCollection();
 
-	await checkins.updateOne(
+	// Limit note length (mirrors UI: textarea has no maxlength but server enforces sanity)
+	const cleaned = note?.toString().trim().slice(0, 500) || null;
+
+	const result = await checkins.updateOne(
 		{ habitId, userId: locals.user.userId, date: today },
-		{ $set: { note: note?.trim() || null } }
+		{ $set: { note: cleaned } }
 	);
+
+	if (result.matchedCount === 0) {
+		return json({ ok: false, reason: 'no_checkin' }, { status: 404 });
+	}
 
 	return json({ ok: true });
 }

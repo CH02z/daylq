@@ -57,6 +57,39 @@ export const actions = {
 		redirect(302, '/categories');
 	},
 
+	edit: async ({ request, locals }) => {
+		if (!locals.user) redirect(302, '/auth/login');
+
+		const data = await request.formData();
+		const id = data.get('id')?.toString();
+		const label = data.get('label')?.toString().trim();
+		const color = data.get('color')?.toString();
+
+		if (!id) return fail(400, { editError: 'Ungültige Kategorie.' });
+		if (!label || !color) return fail(400, { editError: 'Name und Farbe erforderlich.', editId: id });
+		if (label.length > 40) return fail(400, { editError: 'Name max. 40 Zeichen.', editId: id });
+
+		const cats = await getCategoriesCollection();
+		const cat = await cats.findOne({ _id: new ObjectId(id), userId: locals.user.userId });
+		if (!cat) return fail(404, { editError: 'Nicht gefunden.', editId: id });
+
+		await cats.updateOne(
+			{ _id: new ObjectId(id), userId: locals.user.userId },
+			{ $set: { label, color } }
+		);
+
+		// Propagate color change to all habits in this category
+		if (color !== cat.color) {
+			const habits = await getHabitsCollection();
+			await habits.updateMany(
+				{ userId: locals.user.userId, category: id, color: cat.color },
+				{ $set: { color } }
+			);
+		}
+
+		redirect(302, '/categories');
+	},
+
 	delete: async ({ request, locals }) => {
 		if (!locals.user) redirect(302, '/auth/login');
 

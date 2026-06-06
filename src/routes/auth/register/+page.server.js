@@ -1,8 +1,14 @@
 import { fail, redirect } from '@sveltejs/kit';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { dev } from '$app/environment';
 import { getUsersCollection } from '$lib/server/models/User.js';
 import { JWT_SECRET } from '$env/static/private';
+
+export function load({ locals }) {
+	if (locals.user) redirect(302, '/dashboard');
+	return {};
+}
 
 export const actions = {
 	default: async ({ request, cookies }) => {
@@ -55,8 +61,8 @@ export const actions = {
 		cookies.set('auth_token', token, {
 			path: '/',
 			httpOnly: true,
-			sameSite: 'strict',
-			secure: false,
+			sameSite: 'lax',
+			secure: !dev,
 			maxAge: 60 * 60 * 24 * 7
 		});
 

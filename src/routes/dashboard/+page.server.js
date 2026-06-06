@@ -22,12 +22,18 @@ export async function load({ locals }) {
 
 	const today = new Date().toISOString().split('T')[0];
 
-	const [recentCheckins, todayCheckins, totalCheckinCount, userCategories] = await Promise.all([
+	const [recentCheckins, todayCheckins, totalAgg, userCategories] = await Promise.all([
 		checkins.find({ userId: locals.user.userId, date: { $gte: sinceStr } }).toArray(),
 		checkins.find({ userId: locals.user.userId, date: today }).toArray(),
-		checkins.countDocuments({ userId: locals.user.userId }),
+		checkins
+			.aggregate([
+				{ $match: { userId: locals.user.userId } },
+				{ $group: { _id: null, total: { $sum: { $ifNull: ['$count', 1] } } } }
+			])
+			.toArray(),
 		cats.find({ userId: locals.user.userId }).sort({ createdAt: 1 }).toArray()
 	]);
+	const totalCheckinCount = totalAgg[0]?.total ?? 0;
 
 	return {
 		user: locals.user,

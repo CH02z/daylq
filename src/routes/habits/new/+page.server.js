@@ -24,6 +24,10 @@ export const actions = {
 		const icon = data.get('icon')?.toString();
 		const color = data.get('color')?.toString();
 		const reminderTime = data.get('reminderTime')?.toString().trim() || null;
+		const dailyGoalRaw = parseInt(data.get('dailyGoal')?.toString() ?? '1', 10);
+		const dailyGoal = Number.isFinite(dailyGoalRaw)
+			? Math.min(20, Math.max(1, dailyGoalRaw))
+			: 1;
 
 		if (!name || !category || !icon || !color) {
 			return fail(400, { error: 'Bitte alle Felder ausfüllen.' });
@@ -40,6 +44,7 @@ export const actions = {
 			icon,
 			color,
 			reminderTime,
+			dailyGoal,
 			active: true,
 			createdAt: new Date()
 		});

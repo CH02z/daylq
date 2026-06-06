@@ -49,6 +49,10 @@ export const actions = {
 		const icon = data.get('icon')?.toString();
 		const color = data.get('color')?.toString();
 		const reminderTime = data.get('reminderTime')?.toString().trim() || null;
+		const dailyGoalRaw = parseInt(data.get('dailyGoal')?.toString() ?? '1', 10);
+		const dailyGoal = Number.isFinite(dailyGoalRaw)
+			? Math.min(20, Math.max(1, dailyGoalRaw))
+			: 1;
 
 		if (!name || !category || !icon || !color) {
 			return fail(400, { editError: 'Bitte alle Felder ausfüllen.' });
@@ -60,7 +64,7 @@ export const actions = {
 		const habits = await getHabitsCollection();
 		await habits.updateOne(
 			{ _id: new ObjectId(params.id), userId: locals.user.userId },
-			{ $set: { name, category, icon, color, reminderTime } }
+			{ $set: { name, category, icon, color, reminderTime, dailyGoal } }
 		);
 
 		redirect(302, `/habits/${params.id}`);
