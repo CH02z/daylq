@@ -46,7 +46,8 @@
       "Skill(anthropic-skills:docx:*)",
       "Bash(extract-text daylq_usability_Erik_Grütter.docx)",
       "Bash(pandoc --version)",
-      "mcp__Claude_Preview__preview_start"
+      "mcp__Claude_Preview__preview_start",
+      "Bash(NODE_PATH=$\\(npm root -g\\) node build-video-script.js)"
     ]
   }
 }
